@@ -1,5 +1,5 @@
 import { PrismaService } from './prisma/prisma.service';
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Body } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Food } from '@prisma/client';
 
@@ -34,6 +34,23 @@ export class AppController {
   async receive(): Promise<any> {
     console.log('start rabbitmq');
     await this.appService.rabbitMQReceive();
+  }
+
+  @Get('rabbitmq/receive/wait')
+  async receiveWait(
+    @Body('queue_name') queueName: string,
+  ): Promise<any> {
+    console.log(`receive rabbitmq wait: ${queueName}`);
+    await this.appService.rabbitMQReceiveWait(queueName);
+  }
+
+  @Get('rabbitmq/send')
+  async send(
+    @Body('queue_name') queueName: string,
+    @Body('message') message: string,
+  ): Promise<any> {
+    console.log(`send rabbitmq: ${queueName}`);
+    await this.appService.rabbitMQReceiveSend(queueName, message);
   }
 
   @Get('foods')

@@ -50,4 +50,55 @@ export class AppService {
       console.log(e);
     }
   }
+
+  async rabbitMQReceiveWait(queueName: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const virtualHost = '/';
+      const portNumber = 5672;
+      const hostAddress = 'localhost';
+      const url = `amqp://guest:guest@${hostAddress}:${portNumber}/${virtualHost}`;
+
+      try {
+        const connection = await amqplib.connect(url);
+        const channel = await connection.createChannel();
+
+        await channel.consume(queueName, async (message) => {
+          console.log(message && message.content.toString());
+
+          if (message) {
+            console.log('to ack');
+            channel.ack(message);
+            return resolve(message)
+          }
+        });
+      } catch (e) {
+        console.log(e);
+        return reject(e);
+      }
+    })
+  }
+
+  async rabbitMQReceiveSend(queueName: string, message: string): Promise<any> {
+    const virtualHost = '/';
+    const portNumber = 5672;
+    const hostAddress = 'localhost';
+    const url = `amqp://guest:guest@${hostAddress}:${portNumber}/${virtualHost}`;
+
+    const connection = await amqplib.connect(url);
+    const channel = await connection.createChannel();
+
+    const send = async (queue: string, msg: Buffer) => {
+      await channel.assertQueue(queue, {durable: true});
+      return channel.sendToQueue(queue, msg)
+    }
+
+    const msg = {
+      message,
+      date: new Date().getTime()
+    };
+
+    // 送るメッセージの内容
+    await send(queueName, Buffer.from(JSON.stringify(msg)));
+    console.log('message send success', message);
+  };
 }
