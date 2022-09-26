@@ -51,7 +51,7 @@ export class AppService {
     }
   }
 
-  async rabbitMQReceiveWait(queueName: string): Promise<any> {
+  async rabbitMQReceiveWait(waitQueueName: string, sequenceId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const virtualHost = '/';
       const portNumber = 5672;
@@ -62,13 +62,20 @@ export class AppService {
         const connection = await amqplib.connect(url);
         const channel = await connection.createChannel();
 
-        await channel.consume(queueName, async (message) => {
-          console.log(message && message.content.toString());
+        await channel.consume(waitQueueName, async (queueData: any) => {
+          const contentMessage = queueData.content.toString();
+          console.log(contentMessage);
 
-          if (message) {
-            console.log('to ack');
-            channel.ack(message);
-            return resolve(message)
+          const parsedMessage = JSON.parse(queueData.content.toString());
+          const sequence = JSON.parse(parsedMessage.message);
+
+          console.log(`message received: ${typeof sequence.sequenceId}`);
+          console.log(`message received: ${typeof sequenceId}`);
+
+          if (sequence.sequenceId === sequenceId) {
+            console.log(`received sequenceId: ${sequenceId}`);
+            channel.ack(queueData);
+            return resolve(queueData)
           }
         });
       } catch (e) {
@@ -78,7 +85,7 @@ export class AppService {
     })
   }
 
-  async rabbitMQReceiveSend(queueName: string, message: string): Promise<any> {
+  async rabbitMQReceiveSend(destinationQueueName: string, message: string): Promise<any> {
     const virtualHost = '/';
     const portNumber = 5672;
     const hostAddress = 'localhost';
@@ -98,7 +105,7 @@ export class AppService {
     };
 
     // 送るメッセージの内容
-    await send(queueName, Buffer.from(JSON.stringify(msg)));
+    await send(destinationQueueName, Buffer.from(JSON.stringify(msg)));
     console.log('message send success', message);
   };
 }

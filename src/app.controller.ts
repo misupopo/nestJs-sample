@@ -38,19 +38,20 @@ export class AppController {
 
   @Get('rabbitmq/receive/wait')
   async receiveWait(
-    @Body('queue_name') queueName: string,
+    @Body('wait_queue_name') waitQueueName: string,
+    @Body('sequence_id') sequenceId: string,
   ): Promise<any> {
-    console.log(`receive rabbitmq wait: ${queueName}`);
-    await this.appService.rabbitMQReceiveWait(queueName);
+    console.log(`receive rabbitmq wait: ${waitQueueName}`);
+    await this.appService.rabbitMQReceiveWait(waitQueueName, sequenceId);
   }
 
   @Get('rabbitmq/send')
   async send(
-    @Body('queue_name') queueName: string,
+    @Body('destination_queue_name') destinationQueueName: string,
     @Body('message') message: string,
   ): Promise<any> {
-    console.log(`send rabbitmq: ${queueName}`);
-    await this.appService.rabbitMQReceiveSend(queueName, message);
+    console.log(`send rabbitmq: ${destinationQueueName}`);
+    await this.appService.rabbitMQReceiveSend(destinationQueueName, message);
   }
 
   @Get('foods')
