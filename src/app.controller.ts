@@ -30,6 +30,12 @@ export class AppController {
     };
   }
 
+  @Get('rabbitmq/receive')
+  async receive(): Promise<any> {
+    console.log('start rabbitmq');
+    await this.appService.rabbitMQReceive();
+  }
+
   @Get('foods')
   getFoods(): Promise<Food[]> {
     return this.prismaService.food.findMany();
