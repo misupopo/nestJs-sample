@@ -1,17 +1,25 @@
 import { PrismaService } from './prisma/prisma.service';
-import { Controller, Get, Body } from '@nestjs/common';
+import { Controller, Get, Body, Inject } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Food } from '@prisma/client';
+import { WINSTON_MODULE_PROVIDER } from "nest-winston";
+import { Logger } from "winston";
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly prismaService: PrismaService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Get()
   getHello(): string {
+    this.logger.warn('this is warn level');
+    this.logger.debug('this is debug level');
+    this.logger.info('this is info level');
+    this.logger.error('this is error level');
+    console.log('this is console.log');
     return this.appService.getHello();
   }
 
