@@ -6,7 +6,7 @@ import {
   WinstonModuleOptions,
 } from 'nest-winston';
 
-const { json, timestamp, combine } = winston.format;
+const { json, timestamp, combine, colorize, printf, simple } = winston.format;
 
 @Injectable()
 export class WinstonConfigService implements WinstonModuleOptionsFactory {
@@ -31,7 +31,22 @@ export class WinstonConfigService implements WinstonModuleOptionsFactory {
     }
     return {
       transports: transports,
-      format: combine(timestamp(), json()),
+      format: combine(
+        timestamp(),
+        colorize(),
+        json(),
+        simple(),
+        printf(info => {
+          return Object.keys(info).reverse().reduce((acc, key, i) => {
+            if (typeof key === 'string') {
+              if (i > 0) acc += ", "
+              acc += `"${key}": "${info[key]}"`
+            }
+
+            return acc;
+          }, '{ ') + ' }';
+        })
+      ),
       defaultMeta: {
         appName: 'nestjs-starter',
       },

@@ -11,8 +11,6 @@ export class AppService {
   }
 
   async globalVariableSet(): Promise<any> {
-    this.test = '111'
-
     return new Promise(resolve => {
       setTimeout(() => {
         const result = {
@@ -54,8 +52,8 @@ export class AppService {
   async rabbitMQReceiveWait(waitQueueName: string, sequenceId: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const virtualHost = '/';
-      const portNumber = 5672;
-      const hostAddress = 'localhost';
+      const portNumber = process.env.RABBITMQ_PORT;
+      const hostAddress = process.env.RABBITMQ_HOST;
       const url = `amqp://guest:guest@${hostAddress}:${portNumber}/${virtualHost}`;
 
       try {
@@ -87,8 +85,8 @@ export class AppService {
 
   async rabbitMQReceiveSend(destinationQueueName: string, message: string): Promise<any> {
     const virtualHost = '/';
-    const portNumber = 5672;
-    const hostAddress = 'localhost';
+    const portNumber = process.env.RABBITMQ_PORT;
+    const hostAddress = process.env.RABBITMQ_HOST;
     const url = `amqp://guest:guest@${hostAddress}:${portNumber}/${virtualHost}`;
 
     const connection = await amqplib.connect(url);

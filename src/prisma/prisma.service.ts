@@ -13,20 +13,12 @@ export class PrismaService extends PrismaClient
   }
 
   async onModuleInit() {
-    this.logger.warn('this is warn level');
-    this.logger.debug('this is debug level');
-    this.logger.info('this is info level');
-    this.logger.error('this is error level');
-    console.log('this is console.log');
     await this.$connect();
+    this.logger.info('database connected');
   }
 
   async onModuleDestroy() {
-    this.logger.warn('this is warn level');
-    this.logger.debug('this is debug level');
-    this.logger.info('this is info level');
-    this.logger.error('this is error level');
-    console.log('this is console.log');
     await this.$disconnect();
+    this.logger.info('database disconnected');
   }
 }

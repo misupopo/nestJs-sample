@@ -7,6 +7,7 @@ const port = 3000;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // nestjs の system log も表示する（起動時など）
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   app.useGlobalPipes(new ValidationPipe());
 
