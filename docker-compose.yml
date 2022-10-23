@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nest-api 
+    container_name: nest-api
     restart: always
     ports:
       - 3000:3000
@@ -12,18 +12,49 @@ services:
       - postgres
     env_file:
       - .env
+    environment:
+      RABBITMQ_HOST: 172.21.1.3
+    networks:
+      nest-application:
+        ipv4_address: 172.21.1.1
 
-  postgres:
-    image: postgres:13
-    container_name: postgresprisma
-    restart: always
+  nest-database:
+    image: mysql:8-debian
+    container_name: nest-database
     ports:
-      - 5432:5432
-    env_file:
-      - .env
+      - "3306:3306"
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - ./db/mysql:/var/lib/mysql
+      - ./config.cnf:/etc/mysql/conf.d/config.cnf
+      - ./:/app/src
+    command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    working_dir: /app/src
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test1234
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    networks:
+      nest-application:
+        ipv4_address: 172.21.1.2
 
-volumes:
-  postgres:
-    name: nest-prisma-docker-db
+  nest-rabbitmq:
+    container_name: nest-rabbitmq
+    build:
+      dockerfile: ./docker/rabbitmq/Dockerfile
+      context: .
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "1883:1883"
+    networks:
+      nest-application:
+        ipv4_address: 172.21.1.3
+
+networks:
+  nest-application:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.0.0/16
