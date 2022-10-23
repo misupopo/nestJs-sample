@@ -1,5 +1,6 @@
 import { Injectable, Global } from '@nestjs/common';
 import * as amqplib from 'amqplib';
+import { test } from 'config';
 
 @Global()
 @Injectable()
@@ -7,6 +8,7 @@ export class AppService {
   public test: string = ''
 
   getHello(): string {
+    console.log('test', test);
     return 'Hello World!';
   }
 
