@@ -48,6 +48,9 @@ services:
       - "15672:15672"
       - "5672:5672"
       - "1883:1883"
+    # rabbitmq の永続化ボリューム
+    volumes:
+      - './rabbitmq:/var/lib/rabbitmq/mnesia/'
     networks:
       nest-application:
         ipv4_address: 172.21.1.3
