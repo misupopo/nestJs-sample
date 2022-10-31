@@ -1,10 +1,21 @@
 import { Injectable, Global } from '@nestjs/common';
 import * as amqplib from 'amqplib';
+import { ConfigService } from '@nestjs/config';
 
 @Global()
 @Injectable()
 export class AppService {
+  constructor(
+    private configService: ConfigService,
+  ) {}
+
   public test: string = ''
+
+  showConfig(): any {
+    const { message } = this.configService.get('configuration');
+    console.log(message);
+    return message;
+  }
 
   getHello(): string {
     return 'Hello World!';

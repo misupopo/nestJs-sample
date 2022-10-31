@@ -1,0 +1,7 @@
+{
+  "logLevel": "Debug",
+  "rabbitmq": {
+    "host": "localhost",
+    "port": 5672
+  }
+}

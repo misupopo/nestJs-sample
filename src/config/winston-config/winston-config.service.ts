@@ -5,6 +5,8 @@ import {
   WinstonModuleOptionsFactory,
   WinstonModuleOptions,
 } from 'nest-winston';
+import { logLevel } from 'config';
+import { LogLevel } from '@shared/enums/log-level';
 
 const { json, timestamp, combine, colorize, printf, simple } = winston.format;
 
@@ -13,10 +15,13 @@ export class WinstonConfigService implements WinstonModuleOptionsFactory {
   createWinstonModuleOptions(): WinstonModuleOptions {
     const { NODE_ENV } = process.env;
     const transports: any[] = [];
+
+    console.log(`NODE_ENV: ${NODE_ENV}`);
+
     if (NODE_ENV === 'development') {
-      transports.push(new winston.transports.Console());
+      transports.push(new winston.transports.Console({level: LogLevel[logLevel]}));
     } else {
-      ['error', 'debug', 'info', 'warn'].forEach((item) => {
+      [LogLevel.Error, LogLevel.Warn, LogLevel.Info, LogLevel.Debug].forEach((item) => {
         transports.push(
           new winston.transports.DailyRotateFile({
             level: item,
