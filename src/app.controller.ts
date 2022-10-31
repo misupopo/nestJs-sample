@@ -23,6 +23,11 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Get('show/config')
+  showConfig(): string {
+    return this.appService.showConfig();
+  }
+
   // 変数の共通かはできないみたい
   @Get('global/variable/set')
   async globalVariableTest(): Promise<any> {
