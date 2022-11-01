@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UsersController } from "./users.controller";
-import { RabbitmqRepository } from '@shared/repositories/rabbitmq/rabbitmq.repository';
+import { RabbitmqService } from '@shared/services/rabbitmq/rabbitmq.service';
 import { UsersService } from './users.service';
 
 @Module({
   controllers: [UsersController],
-  providers: [RabbitmqRepository, UsersService],
+  providers: [RabbitmqService, UsersService],
 })
 export class UsersModule {
 }

@@ -2,5 +2,5 @@ node_modules
 dist
 db
 log
-!src/shared/repositories/rabbitmq
+!src/shared/services/rabbitmq
 rabbitmq/*
