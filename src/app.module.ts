@@ -3,11 +3,12 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@config/config.module';
+import { ControllersModule } from './controllers/controllers.module';
 import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
 
 @Module({
-  imports: [PrismaModule, ConfigModule, NestConfigModule.forRoot({
+  imports: [ControllersModule, PrismaModule, ConfigModule, NestConfigModule.forRoot({
     load: [configuration],
   })],
   controllers: [AppController],
