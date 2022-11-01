@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { RabbitmqRepository } from "@shared/repositories/rabbitmq/rabbitmq.repository";
+import { RabbitmqService } from "@shared/services/rabbitmq/rabbitmq.service";
 
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly rabbitmqRepository: RabbitmqRepository,
+    private readonly rabbitmqRepository: RabbitmqService,
   ) {}
 
   async sendUserInfo(): Promise<Object> {
