@@ -84,6 +84,9 @@ export class AppService {
           if (sequence.sequenceId === sequenceId) {
             console.log(`received sequenceId: ${sequenceId}`);
             channel.ack(queueData);
+            // close をしないとバグになる
+            // response が1回目は返ってくるが2回目は返ってこないバグになる
+            await channel.close()
             return resolve(queueData)
           }
         });

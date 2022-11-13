@@ -56,6 +56,7 @@ export class AppController {
   ): Promise<any> {
     console.log(`receive rabbitmq wait: ${waitQueueName}`);
     await this.appService.rabbitMQReceiveWait(waitQueueName, sequenceId);
+    return { sequenceId }
   }
 
   @Get('rabbitmq/send')
