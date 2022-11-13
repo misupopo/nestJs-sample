@@ -70,6 +70,7 @@ export class AppService {
       try {
         const connection = await amqplib.connect(url);
         const channel = await connection.createChannel();
+        let timerId;
 
         await channel.consume(waitQueueName, async (queueData: any) => {
           const contentMessage = queueData.content.toString();
@@ -83,13 +84,29 @@ export class AppService {
 
           if (sequence.sequenceId === sequenceId) {
             console.log(`received sequenceId: ${sequenceId}`);
+            // noAck: true にすると、応答を待たずにメッセージを削除する
+            // 疎通確認しないのであまりおすすめしない
             channel.ack(queueData);
+            // console.log(`worked channel act: ${sequenceId}`);
             // close をしないとバグになる
             // response が1回目は返ってくるが2回目は返ってこないバグになる
             await channel.close()
+            console.log(`closed channel: ${sequenceId}`);
+            clearTimeout(timerId);
+            console.log(`clearTimeout: ${timerId}`);
             return resolve(queueData)
           }
-        });
+        }, { noAck: false });
+
+        timerId = setTimeout(async () => {
+          await channel.close()
+          console.log(`timeout: ${sequenceId}`);
+          return reject(
+            new Error('timeout')
+          );
+        },  5000);
+
+        console.log(`timerId: ${timerId}`);
       } catch (e) {
         console.log(e);
         return reject(e);
