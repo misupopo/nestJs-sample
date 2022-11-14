@@ -49,6 +49,7 @@ export class AppController {
     await this.appService.rabbitMQReceive();
   }
 
+  // todo makefile curl のオプションで -d からじゃないと動かないので後で hoppschotch からパラメーターを付与する方法を調査する
   @Get('rabbitmq/receive/wait')
   async receiveWait(
     @Body('wait_queue_name') waitQueueName: string,
