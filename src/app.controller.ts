@@ -13,6 +13,14 @@ export class AppController {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @Get('REG_TEST')
+  beforeRegexTest(): Object {
+    return {
+      path: 'REG_',
+      message: 'not regex',
+    };
+  }
+
   // 正規表現を使ったパスマッピング
   @Get('REG_*')
   regexTest(): Object {
