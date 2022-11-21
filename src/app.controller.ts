@@ -13,6 +13,7 @@ export class AppController {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  // 正規表現を使ったパターンに該当する前に実行される
   @Get('REG_TEST')
   beforeRegexTest(): Object {
     return {
