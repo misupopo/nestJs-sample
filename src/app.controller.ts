@@ -1,5 +1,5 @@
 import { PrismaService } from './prisma/prisma.service';
-import { Controller, Get, Body, Inject, Param } from '@nestjs/common';
+import { Controller, Get, Body, Inject, Param, Request, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Food } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from "nest-winston";
@@ -17,16 +17,38 @@ export class AppController {
   @Get('REG_TEST')
   beforeRegexTest(): Object {
     return {
-      path: 'REG_',
+      path: 'REG_TEST',
       message: 'not regex',
+    };
+  }
+
+  @Get('REG_TEST/test')
+  beforeNestedRegexTest(): Object {
+    return {
+      path: 'REG_TEST/test',
+      message: 'not nested regex',
+    };
+  }
+
+  // nest-router を使う場合はこれを通すのは難しいので @Req を使った方が良さそう
+  @Get('REG_*/*')
+  nestedRegexTest(): Object {
+    return {
+      path: 'REG_*/*',
+      message: 'nested regex',
     };
   }
 
   // 正規表現を使ったパスマッピング
   @Get('REG_*')
-  regexTest(): Object {
+  regexTest(
+    @Req() req: Request,
+  ): Object {
+    const path = req.url.split(/\//);
+    console.log(path);
+
     return {
-      path: 'REG_',
+      path: 'REG_*',
     };
   }
 
@@ -34,7 +56,6 @@ export class AppController {
   showConfig(): string {
     return this.appService.showConfig();
   }
-
 
   // 変数の共通かはできないみたい
   @Get('global/variable/set')
