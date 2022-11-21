@@ -1,5 +1,5 @@
 import { PrismaService } from './prisma/prisma.service';
-import { Controller, Get, Body, Inject } from '@nestjs/common';
+import { Controller, Get, Body, Inject, Param } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Food } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from "nest-winston";
@@ -13,20 +13,11 @@ export class AppController {
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Get()
-  getHello(): string {
-    this.logger.warn('this is warn level');
-    this.logger.debug('this is debug level');
-    this.logger.info('this is info level');
-    this.logger.error('this is error level');
-    console.log('this is console.log');
-    return this.appService.getHello();
-  }
-
   @Get('show/config')
   showConfig(): string {
     return this.appService.showConfig();
   }
+
 
   // 変数の共通かはできないみたい
   @Get('global/variable/set')
@@ -39,7 +30,8 @@ export class AppController {
     const result = await this.appService.globalVariableExport();
     console.log(`result: ${result}`)
     return {
-      result: 'success'
+      result: 'success',
+      path: 'global/variable/export',
     };
   }
 
@@ -72,5 +64,28 @@ export class AppController {
   @Get('foods')
   getFoods(): Promise<Food[]> {
     return this.prismaService.food.findMany();
+  }
+
+  // こういうあいまいな mapping の仕方は最後に持っていかないといけない
+  @Get(':arg1/:arg2')
+  pathMappingTest(
+    @Param('arg1') arg1: string,
+    @Param('arg2') arg2: string,
+  ): Object {
+    return {
+      arg1: arg1,
+      arg2: arg2,
+      path: ':arg1/:arg2',
+    };
+  }
+
+  @Get()
+  getHello(): string {
+    this.logger.warn('this is warn level');
+    this.logger.debug('this is debug level');
+    this.logger.info('this is info level');
+    this.logger.error('this is error level');
+    console.log('this is console.log');
+    return this.appService.getHello();
   }
 }
